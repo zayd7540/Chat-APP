@@ -1,0 +1,193 @@
+import java.util.*;
+
+class Contact {
+    private String name;
+    private String phone;
+
+    public Contact(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + ", Phone: " + phone;
+    }
+}
+
+class Message {
+    private String messageContent;
+    private Date timestamp;
+
+    public Message(String messageContent) {
+        this.messageContent = messageContent;
+        this.timestamp = new Date(); // current date and time
+    }
+
+    public String getMessageContent() {
+        return messageContent;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + timestamp + "] " + messageContent;
+    }
+}
+
+class ChatApp {
+    private Map<String, Contact> contacts = new HashMap<>();
+    private Map<String, List<Message>> messageStore = new HashMap<>();
+
+    // 1. Add Contact
+    public void addContact(String name, String phone) {
+        Contact contact = new Contact(name, phone);
+        contacts.put(phone, contact);
+        messageStore.put(phone, new ArrayList<>());
+        System.out.println("Contact added successfully.");
+    }
+
+    // 2. Remove Contact
+    public void removeContact(String phone) {
+        if (contacts.containsKey(phone)) {
+            contacts.remove(phone);
+            messageStore.remove(phone);
+            System.out.println("Contact removed successfully.");
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+
+    // 3. View Contact List
+    public void viewContacts() {
+        if (contacts.isEmpty()) {
+            System.out.println("Contact list is empty.");
+        } else {
+            System.out.println("Contact List:");
+            for (Contact contact : contacts.values()) {
+                System.out.println(contact);
+            }
+        }
+    }
+
+    // 4. Send Message
+    public void sendMessage(String phone, String messageContent) {
+        if (contacts.containsKey(phone)) {
+            Message message = new Message(messageContent);
+            messageStore.get(phone).add(message);
+            System.out.println("Message sent to " + contacts.get(phone).getName());
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+
+    // 5. View Messages
+    public void viewMessages(String phone) {
+        if (contacts.containsKey(phone)) {
+            List<Message> messages = messageStore.get(phone);
+            if (messages.isEmpty()) {
+                System.out.println("No messages found.");
+            } else {
+                System.out.println("Messages with " + contacts.get(phone).getName() + ":");
+                for (Message message : messages) {
+                    System.out.println(message);
+                }
+            }
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+
+    // 6. Delete Messages
+    public void deleteMessages(String phone) {
+        if (contacts.containsKey(phone)) {
+            messageStore.get(phone).clear();
+            System.out.println("All messages with " + contacts.get(phone).getName() + " have been deleted.");
+        } else {
+            System.out.println("Contact not found.");
+        }
+    }
+}
+
+public class ChatApplication {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ChatApp chatApp = new ChatApp();
+        int choice;
+
+        do {
+            System.out.println("\n*** Chat Application Menu ***");
+            System.out.println("1. Add Contact");
+            System.out.println("2. Remove Contact");
+            System.out.println("3. View Contact List");
+            System.out.println("4. Send Message");
+            System.out.println("5. View Messages");
+            System.out.println("6. Delete Messages");
+            System.out.println("7. Exit");
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+            sc.nextLine(); // consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter contact name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter phone number: ");
+                    String phone = sc.nextLine();
+                    chatApp.addContact(name, phone);
+                    break;
+
+                case 2:
+                    System.out.print("Enter phone number to remove: ");
+                    phone = sc.nextLine();
+                    chatApp.removeContact(phone);
+                    break;
+
+                case 3:
+                    chatApp.viewContacts();
+                    break;
+
+                case 4:
+                    System.out.print("Enter contact's phone number: ");
+                    phone = sc.nextLine();
+                    System.out.print("Enter message: ");
+                    String message = sc.nextLine();
+                    chatApp.sendMessage(phone, message);
+                    break;
+
+                case 5:
+                    System.out.print("Enter contact's phone number to view messages: ");
+                    phone = sc.nextLine();
+                    chatApp.viewMessages(phone);
+                    break;
+
+                case 6:
+                    System.out.print("Enter contact's phone number to delete messages: ");
+                    phone = sc.nextLine();
+                    chatApp.deleteMessages(phone);
+                    break;
+
+                case 7:
+                    System.out.println("Exiting the application.");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+                    break;
+            }
+        } while (choice != 7);
+
+        sc.close();
+    }
+}
